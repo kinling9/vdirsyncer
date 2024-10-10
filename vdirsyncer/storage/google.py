@@ -29,6 +29,9 @@ TOKEN_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 REFRESH_URL = "https://www.googleapis.com/oauth2/v4/token"
 
 try:
+    import sys
+
+    sys.path.append("/home/kinling9/packages/aiohttp-oauthlib")
     from aiohttp_oauthlib import OAuth2Session
 
     have_oauth2 = True
@@ -54,7 +57,9 @@ class GoogleSession(dav.DAVSession):
             self.url = url
 
         self.useragent = client_id
-        self._settings = {}
+        self._settings = {
+            "proxy": "http://127.0.0.1:10809",
+        }
         self.connector = connector
 
         self._token_file = Path(expand_path(token_file))
@@ -156,6 +161,7 @@ class GoogleSession(dav.DAVSession):
                     authorization_response=authorization_response,
                     # Google specific extra param used for client authentication:
                     client_secret=self._client_secret,
+                    proxies="http://127.0.0.1:10809",
                 )
                 logger.debug(f"token: {self._token}")
                 local_server.server_close()
